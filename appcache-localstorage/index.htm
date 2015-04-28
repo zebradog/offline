@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html manifest="manifest.appcache">
+<head>
+	<title>Appcache + LocalStorage Offline Test</title>
+  <style type="text/css">
+    img,video{
+      min-width:100px;
+      min-height:100px;
+      max-width:300px;
+      max-height:300px;
+      float:left;
+      margin:0 10px 10px 0;
+    }
+    h2{
+      clear:both;
+    }
+  </style>
+	<script src="js/lib/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript">
+
+	var LOCAL_FILE_BASEURL = 'filesystem:' + window.location.origin + '/persistent/';
+	var FILESYSTEM_RESERVE = 5000 * 1024 * 1024;
+
+
+	$(function(){
+
+		$('#cached img, #cached video').each(function(){
+			var $this = $(this);
+			var src = $this.attr('src');
+			var filename = src.split('/');
+			filename = filename[filename.length-1];
+			src = LOCAL_FILE_BASEURL+filename;
+			$this.attr('src',src);
+			$this.parent('a').attr('href',src);
+			download(src, filename, function (blob, filename) {
+        save(blob, filename);
+      });
+		});
+
+	});
+
+	function download(url, filename, callback) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+
+    xhr.onerror = console.error;
+    xhr.onabort = console.error;
+
+    xhr.onload = function () {
+
+      var result;
+
+      if (xhr.status === 200) {
+        //blob
+        result = xhr.response;
+      } else {
+        result = null;
+      }
+
+      if (result !== null) {
+        callback(result, filename);
+      }
+
+    };
+
+    xhr.send();
+  };
+
+	function save(fileBlob, filename, callback) {
+      var instance = this;
+			window.webkitRequestFileSystem(window.PERSISTENT, FILESYSTEM_RESERVE, function (fs) {
+        fs.root.getFile(filename, { create: true }, function (fileEntry) {
+          fileEntry.createWriter(function (fileWriter) {
+
+            fileWriter.onwriteend = function (e) {
+              console.log("file " + filename + " successfully written to filesystem.");
+              if(callback) callback();
+            };
+            var blob = new Blob([fileBlob], { type: fileBlob.type });
+            fileWriter.write(blob);
+
+          }, console.error);
+        }, console.error);
+      }, console.error);
+    };
+
+  </script>
+</head>
+<body>
+  <h1>Appcache + LocalStorage</h1>
+  <h2>Cached</h2>
+	<div id="cached">
+	  <video src="https://s3.amazonaws.com/files.zebradog.com/test/video/1.mp4" autoplay loop></video>
+	  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/1.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/1.jpg"></a>
+	  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/2.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/2.jpg"></a>
+	  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/3.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/3.jpg"></a>
+	  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/4.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/4.jpg"></a>
+	  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/5.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/5.jpg"></a>
+  	<a href="./img/6.jpg"><img src="./img/6.jpg"></a>
+	</div>
+  <h2>Not Cached</h2>
+  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/7.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/7.jpg"></a>
+  <a href="https://s3.amazonaws.com/files.zebradog.com/test/image/8.jpg"><img src="https://s3.amazonaws.com/files.zebradog.com/test/image/8.jpg"></a>
+</body>
+</html>
