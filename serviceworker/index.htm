@@ -1,0 +1,76 @@
+<!DOCTYPE>
+<html>
+<head>
+	<title>ServiceWorker Offline Test</title>
+  <style type="text/css">
+    img,video{
+      min-width:100px;
+      min-height:100px;
+      max-width:300px;
+      max-height:300px;
+      float:left;
+      margin:0 10px 10px 0;
+    }
+    h2{
+      clear:both;
+    }
+  </style>
+  <script type="text/javascript">
+		function serviceWorkerInstallComplete() {
+		  console.log('serviceworker install complete');
+		}
+
+		// Helper function which returns a promise which resolves once the service worker registration
+		// is past the "installing" state.
+		function waitUntilInstalled(registration) {
+		  return new Promise(function(resolve, reject) {
+		    if (registration.installing) {
+		      // If the current registration represents the "installing" service worker, then wait
+		      // until the installation step (during which the resources are pre-fetched) completes
+		      // to display the file list.
+		      registration.installing.addEventListener('statechange', function(e) {
+		        if (e.target.state == 'installed') {
+		          resolve();
+		        } else if(e.target.state == 'redundant') {
+		          reject();
+		        }
+		      });
+		    } else {
+		      // Otherwise, if this isn't the "installing" service worker, then installation must have been
+		      // completed during a previous visit to this page, and the resources are already pre-fetched.
+		      // So we can show the list of files right away.
+		      resolve();
+		    }
+		  });
+		}
+
+		if ('serviceWorker' in navigator) {
+		  navigator.serviceWorker.register('./service-worker.js', {scope: './'})
+		    .then(waitUntilInstalled)
+		    .then(serviceWorkerInstallComplete)
+		    .catch(function(error) {
+		      // Something went wrong during registration. The service-worker.js file
+		      // might be unavailable or contain a syntax error.
+		      console.error(error);
+		    });
+		} else {
+		  // The current browser doesn't support service workers.
+		  console.error('Service workers are not supported in the current browser.','http://www.chromium.org/blink/serviceworker/service-worker-faq')
+		}
+  </script>
+</head>
+<body>
+  <h1>ServiceWorker</h1>
+  <h2>Cached</h2>
+  <video src="http://files.zebradog.com/test/video/1.mp4" autoplay loop></video>
+  <a href="http://files.zebradog.com/test/image/1.jpg"><img src="http://files.zebradog.com/test/image/1.jpg"></a>
+  <a href="http://files.zebradog.com/test/image/2.jpg"><img src="http://files.zebradog.com/test/image/2.jpg"></a>
+  <a href="http://files.zebradog.com/test/image/3.jpg"><img src="http://files.zebradog.com/test/image/3.jpg"></a>
+  <a href="http://files.zebradog.com/test/image/4.jpg"><img src="http://files.zebradog.com/test/image/4.jpg"></a>
+  <a href="http://files.zebradog.com/test/image/5.jpg"><img src="http://files.zebradog.com/test/image/5.jpg"></a>
+  <a href="./img/6.jpg"><img src="./img/6.jpg"></a>
+  <h2>Not Cached</h2>
+  <a href="http://files.zebradog.com/test/image/7.jpg"><img src="http://files.zebradog.com/test/image/7.jpg"></a>
+  <a href="http://files.zebradog.com/test/image/7.jpg"><img src="http://files.zebradog.com/test/image/8.jpg"></a>
+</body>
+</html>
