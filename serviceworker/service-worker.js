@@ -29,7 +29,7 @@ importScripts('./js/lib/serviceworker-cache-polyfill.js');
 // cache, then increment the CACHE_VERSION value. It will kick off the service worker update
 // flow and the old cache(s) will be purged as part of the activate event handler when the
 // updated service worker is activated.
-var CACHE_VERSION = 3;
+var CACHE_VERSION = 4;
 var CURRENT_CACHES = {
   prefetch: 'rockets-cache-v' + CACHE_VERSION
 };
@@ -37,8 +37,9 @@ var CURRENT_CACHES = {
 self.addEventListener('install', function(event) {
   var urlsToPrefetch = [
     './',
-    './index.html',,
-    'https://s3.amazonaws.com/files.zebradog.com/test/image/1.jpg'
+    './index.html',
+    'https://s3.amazonaws.com/files.zebradog.com/test/video/1.mp4',
+    'https://s3.amazonaws.com/files.zebradog.com/test/image/1.jpg',
     'https://s3.amazonaws.com/files.zebradog.com/test/image/2.jpg',
     'https://s3.amazonaws.com/files.zebradog.com/test/image/3.jpg',
     'https://s3.amazonaws.com/files.zebradog.com/test/image/4.jpg',
