@@ -29,15 +29,28 @@
 			var src = $this.attr('src');
 			var filename = src.split('/');
 			filename = filename[filename.length-1];
-			src = LOCAL_FILE_BASEURL+filename;
-			$this.attr('src',src);
-			$this.parent('a').attr('href',src);
+			var localSrc = LOCAL_FILE_BASEURL+filename;
 			download(src, filename, function (blob, filename) {
         save(blob, filename);
+				$this.attr('src',localSrc);
+				$this.parent('a').attr('href',localSrc);
       });
 		});
 
 	});
+
+	function downloadFailed(e){
+		console.error('download failed',e);
+		$('#cached img, #cached video').each(function(){
+			var $this = $(this);
+			var src = $this.attr('src');
+			var filename = src.split('/');
+			filename = filename[filename.length-1];
+			var localSrc = LOCAL_FILE_BASEURL+filename;
+			$this.attr('src',localSrc);
+			$this.parent('a').attr('href',localSrc);
+		});
+	}
 
 	function download(url, filename, callback) {
     var xhr = new XMLHttpRequest();
@@ -45,8 +58,8 @@
     xhr.open("GET", url, true);
     xhr.responseType = "blob";
 
-    xhr.onerror = console.error;
-    xhr.onabort = console.error;
+    xhr.onerror = downloadFailed;
+    xhr.onabort = downloadFailed;
 
     xhr.onload = function () {
 
