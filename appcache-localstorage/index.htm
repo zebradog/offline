@@ -89,6 +89,10 @@
       var instance = this;
 			window.webkitRequestFileSystem(window.PERSISTENT, FILESYSTEM_RESERVE, function (fs) {
 				console.log("got filesystem for "+filename);
+				console.log(fs);
+				console.log(fs.root);
+				console.log(fs.root.getFile(filename));
+				console.log("fs debug done");
         fs.root.getFile(filename, { create: true }, function (fileEntry) {
 					console.log("got file "+filename,fileEntry);
           fileEntry.createWriter(function (fileWriter) {
