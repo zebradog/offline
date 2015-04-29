@@ -91,9 +91,9 @@
 				console.log("got filesystem for "+filename);
 				console.log(fs);
 				console.log(fs.root);
-				console.log(fs.root.getFile(filename));
+				console.log(fs.root.getFile(filename,{},function(f){ console.log('test file lookup',f); }));
 				console.log("fs debug done");
-        fs.root.getFile(filename, { create: true }, function (fileEntry) {
+        /*fs.root.getFile(filename, { create: true }, function (fileEntry) {
 					console.log("got file "+filename,fileEntry);
           fileEntry.createWriter(function (fileWriter) {
 						console.log("about to write "+filename);
@@ -105,7 +105,7 @@
             fileWriter.write(blob);
 
           }, console.error);
-        }, console.error);
+        }, console.error); */
       }, console.error);
     };
 
