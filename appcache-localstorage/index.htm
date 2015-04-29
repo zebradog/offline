@@ -29,13 +29,15 @@
 			var src = $this.attr('src');
 			var filename = src.split('/');
 			filename = filename[filename.length-1];
-			var localSrc = LOCAL_FILE_BASEURL+filename;
 			console.log("downloading "+filename);
 			download(src, filename, function (blob, filename) {
 				console.log("saving "+filename);
-        save(blob, filename);
-				$this.attr('src',localSrc);
-				$this.parent('a').attr('href',localSrc);
+        save(blob, filename, function(filename){
+					console.log("done saving "+filename);
+					var localSrc = LOCAL_FILE_BASEURL+filename;
+					$this.attr('src',localSrc);
+					$this.parent('a').attr('href',localSrc);
+				});
       });
 		});
 
@@ -91,7 +93,7 @@
 
             fileWriter.onwriteend = function (e) {
               console.log("file " + filename + " successfully written to filesystem.");
-              if(callback) callback();
+              if(callback) callback(filename);
             };
             var blob = new Blob([fileBlob], { type: fileBlob.type });
             fileWriter.write(blob);
