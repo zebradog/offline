@@ -91,9 +91,9 @@
 				console.log("got filesystem for "+filename);
 				console.log(fs);
 				console.log(fs.root);
-				console.log(fs.root.getFile(filename,{},function(f){ console.log('test file lookup',f); }, function(e){
+				fs.root.getFile(filename,{create:true},function(f){ console.log('test file lookup',f); }, function(e){
 					console.error('error reading/writting file'+filename,e);
-				}));
+				});
 				console.log("fs debug done");
         /*fs.root.getFile(filename, { create: true }, function (fileEntry) {
 					console.log("got file "+filename,fileEntry);
