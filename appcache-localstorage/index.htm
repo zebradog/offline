@@ -88,9 +88,11 @@
 	function save(fileBlob, filename, callback) {
       var instance = this;
 			window.webkitRequestFileSystem(window.PERSISTENT, FILESYSTEM_RESERVE, function (fs) {
+				console.log("got filesystem for "+filename);
         fs.root.getFile(filename, { create: true }, function (fileEntry) {
+					console.log("got file "+filename,fileEntry);
           fileEntry.createWriter(function (fileWriter) {
-
+						console.log("about to write "+filename);
             fileWriter.onwriteend = function (e) {
               console.log("file " + filename + " successfully written to filesystem.");
               if(callback) callback(filename);
