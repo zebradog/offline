@@ -30,7 +30,9 @@
 			var filename = src.split('/');
 			filename = filename[filename.length-1];
 			var localSrc = LOCAL_FILE_BASEURL+filename;
+			console.log("downloading "+filename);
 			download(src, filename, function (blob, filename) {
+				console.log("saving "+filename);
         save(blob, filename);
 				$this.attr('src',localSrc);
 				$this.parent('a').attr('href',localSrc);
